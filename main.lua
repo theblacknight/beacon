@@ -1,6 +1,9 @@
 -- Animation
 require('AnAL')
 
+-- Settings
+local debug = true
+
 -- Player
 local playerAnim
 local playerBody
@@ -79,8 +82,13 @@ function love.draw()
     love.graphics.draw(smog, 0, 0)
     love.graphics.setPixelEffect()
 
-    for i=1, table.getn(objects) do
-        love.graphics.rectangle('fill', objects[i]:getX(), objects[i]:getY(), 16, 16)
+    if debug then
+        for i=1, #objects do
+            love.graphics.rectangle('fill', objects[i]:getX(), objects[i]:getY(), 16, 16)
+        end
+        love.graphics.setColor(255, 0, 0)
+        love.graphics.rectangle('line', playerBody:getX(), playerBody:getY(), 38.33, 61.8)
+        love.graphics.setColor(255, 255, 255)
     end
 end
 

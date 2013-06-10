@@ -3,11 +3,9 @@ require('AnAL')
 
 -- Settings
 local debug = false
-local debugText = "No collisions yet"
-local persisting = 0
 
 -- Player
-local player = { x = 680, y = 200, speed = 200,
+local player = { x = 200, y = 570, speed = 200,
             width = 38.22, height = 61.8
         }
 
@@ -41,6 +39,7 @@ function loadWorld()
 end
 
 function on_collision(dt, shapeA, shapeB, mtvX, mtvY)
+    print ("Collision")
     if (shapeA == player.bbox or shapeB == player.bbox) and state == PLAY then
         player.bbox:move(mtvX, mtvY)
     end
@@ -83,10 +82,6 @@ function love.update(dt)
     collider:update(dt)
     updateLight(dt)
     updatePlayer(dt)
-
-    if debug and string.len(debugText) > 1024 then
-        debugText = string.sub(debugText, 100)
-    end
 end
 
 function love.draw()
@@ -105,26 +100,24 @@ function love.draw()
         love.graphics.rectangle('line', x - player.width/2, y - player.height/2,
                                 player.width, player.height)
         love.graphics.setColor(0, 0, 0)
-        love.graphics.print(debugText, 10, 10)
         love.graphics.setColor(255, 255, 255)
     end
     x, y = player.bbox:bbox()
-    player.anim:draw(100, 100)
+    player.anim:draw(x - player.width/2, y - player.height/2)
 end
 
 -- ################ Keyboard Input ################
 function handleInput(dt)
     if state == PLAY then
         if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
-            player.x = player.x + (dt * player.speed)
             player.anim:setSequence(1, 30)
+            player.bbox:move(dt * player.speed, 0)
         elseif love.keyboard.isDown("left") or love.keyboard.isDown("a") then
-            player.x = player.x + dt * -player.speed
             player.anim:setSequence(1, 30)
+            player.bbox:move(dt * -player.speed, 0)
         else
             player.anim:setSequence(3, 3)
         end
-        player.bbox:move(player.x, player.y)
     end
 end
 
@@ -134,10 +127,10 @@ function love.keypressed( key, unicode )
     end
 
     if love.keyboard.isDown("r") then
-        player.body:setPosition(player.x, player.y)
+        player.body:setPosition(100, 600)
     end
 
     if love.keyboard.isDown(" ") then
-        player.body:setLinearVelocity(0, -500)
+        
     end
 end

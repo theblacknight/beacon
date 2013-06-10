@@ -22,51 +22,32 @@ local map
 local tileSize = 16
 
 -- ################ Physics ################
-local world
+local HC = require 'hardoncollider'
+local collider
 local objects = {}
 function loadWorld()
-    world = love.physics.newWorld(0, 9.81*64, true)
-    world:setCallbacks(beginContact, endContact, preSolve, postSolve)
-    love.physics.setMeter(64)
+    collider = HC(100, on_collision, collision_stop)
     local collisionLayer = map.layers["Fore"]
     for x, y, tile in collisionLayer:iterate() do
         x = x * tileSize + (tileSize / 2)
         y = y * tileSize + (tileSize / 2)
-        body = love.physics.newBody(world, x, y, "static")
-        shape = love.physics.newRectangleShape(tileSize, tileSize)
-        fixture = love.physics.newFixture(body, shape, 2)
-        fixture:setUserData("Tile: X="..x..", Y="..y)
-        tileObject = { body = body, shape = shape}
-        table.insert(objects, tileObject)
+        t = collider:addRectangle(x, y, 16, 16)
+        collider:setPassive(t)
+        table.insert(objects, t)
     end
-    player.body = love.physics.newBody(world, player.x, player.y, "dynamic")
-    player.shape = love.physics.newRectangleShape(player.width, player.height)
-    fixture = love.physics.newFixture(player.body, player.shape, 2)
-    fixture:setUserData("Player")
+    p = collider:addRectangle(player.x, player.y, player.width, player.height)
+    collider:setPassive(p)
+    player.bbox = p
 end
 
-function beginContact(a, b, coll)
-    x,y = coll:getNormal()
-    debugText = debugText.."\n"..a:getUserData().." colliding with "..b:getUserData().." with a vector normal of: "..x..", "..y
-end
-
-
-function endContact(a, b, coll)
-    persisting = 0    -- reset since they're no longer touching
-    debugText = debugText.."\n"..a:getUserData().." uncolliding with "..b:getUserData()
-end
-
-function preSolve(a, b, coll)
-    if persisting == 0 then    -- only say when they first start touching
-        debugText = debugText.."\n"..a:getUserData().." touching "..b:getUserData()
-    elseif persisting < 20 then    -- then just start counting
-        debugText = debugText.." "..persisting
+function on_collision(dt, shapeA, shapeB, mtvX, mtvY)
+    if (shapeA == player.bbox or shapeB == player.bbox) and state == PLAY then
+        player.bbox:move(mtvX, mtvY)
     end
-    persisting = persisting + 1    -- keep track of how many updates they've been touching for
 end
 
-function postSolve(a, b, coll)
--- we won't do anything with this function
+-- this is called when two shapes stop colliding
+function collision_stop(dt, shape_a, shape_b)
 end
 
 -- ################ Lighting ################
@@ -76,8 +57,8 @@ local ligtPos = { x = player.x, y = player.y }
 local beaconEffect
 
 local function updateLight (dt) 
-   y = 600 - player.body:getY()
-   beaconEffect:send("light_pos", {player.body:getX(), y, 0})
+   y = 600 - player.y
+   beaconEffect:send("light_pos", {player.x, y, 0})
 end
 
 -- ################ Global Images ################
@@ -99,7 +80,7 @@ end
 
 function love.update(dt)
     handleInput(dt)
-    world:update(dt)
+    collider:update(dt)
     updateLight(dt)
     updatePlayer(dt)
 
@@ -110,42 +91,40 @@ end
 
 function love.draw()
     map:draw()
-    x, y = player.body:getWorldPoints(player.shape:getPoints())
-    player.anim:draw(x, y)
     love.graphics.setPixelEffect(beaconEffect)
     --love.graphics.draw(smog, 0, 0)
     love.graphics.setPixelEffect()
 
     if debug then
         for i=1, #objects do
-            x, y = objects[i].body:getWorldPoints(objects[i].shape:getPoints())
-            love.graphics.rectangle('fill', x, y, tileSize, tileSize)
+            x, y = objects[i]:bbox()
+            love.graphics.rectangle('fill', x - tileSize/2, y - tileSize/2, tileSize, tileSize)
         end
         love.graphics.setColor(255, 0, 0)
-        x, y = player.body:getWorldPoints(player.shape:getPoints())
-        love.graphics.rectangle('line', x, y,
+        x, y = player.bbox:bbox()
+        love.graphics.rectangle('line', x - player.width/2, y - player.height/2,
                                 player.width, player.height)
         love.graphics.setColor(0, 0, 0)
         love.graphics.print(debugText, 10, 10)
         love.graphics.setColor(255, 255, 255)
     end
+    x, y = player.bbox:bbox()
+    player.anim:draw(100, 100)
 end
 
 -- ################ Keyboard Input ################
 function handleInput(dt)
     if state == PLAY then
-        xSpeed, ySpeed = player.body:getLinearVelocity()
         if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
-            player.body:setLinearVelocity(player.speed, 0)
+            player.x = player.x + (dt * player.speed)
             player.anim:setSequence(1, 30)
         elseif love.keyboard.isDown("left") or love.keyboard.isDown("a") then
-            player.body:setLinearVelocity(-player.speed, 0)
+            player.x = player.x + dt * -player.speed
             player.anim:setSequence(1, 30)
         else
-            player.body:setLinearVelocity(0, ySpeed)
             player.anim:setSequence(3, 3)
         end
-
+        player.bbox:move(player.x, player.y)
     end
 end
 
@@ -156,5 +135,9 @@ function love.keypressed( key, unicode )
 
     if love.keyboard.isDown("r") then
         player.body:setPosition(player.x, player.y)
+    end
+
+    if love.keyboard.isDown(" ") then
+        player.body:setLinearVelocity(0, -500)
     end
 end

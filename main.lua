@@ -56,6 +56,7 @@ function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
             end
         end
     end
+    player.bbox:move(mtv_x, 0)
 end
 
 -- this is called when two shapes stop colliding
@@ -143,6 +144,8 @@ function handleInput(dt)
             player.anim:setSequence(10, 17)
             player.state = RUNNING
         end
+    else
+        player.velocity.x = 0
     end
     
     if player.state ~= JUMPING then

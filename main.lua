@@ -44,6 +44,12 @@ function loadWorld()
 end
 
 function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
+    if mtv_y > 0 then
+        player.bbox:move(0, mtv_y)
+        player.velocity.y = 0
+        return
+    end
+
     if mtv_y < 0 and player.velocity.y > 0 then
         player.bbox:move(0, mtv_y)
         player.velocity.y = 0
@@ -65,6 +71,8 @@ end
 
 -- ################ Lighting ################
 local ligtPos = { x = player.x, y = player.y }
+local BEACON_INITIAL_SIZE = 200
+local beaconSize = BEACON_INITIAL_SIZE
 
 -- ################ Shaders ################
 local beaconEffect
@@ -73,6 +81,9 @@ local function updateLight (dt)
     x, y = player.bbox:bbox()
     y = 600 - y
     beaconEffect:send("light_pos", {x + player.width / 2, y - player.height / 2, 0})
+    beaconEffect:send("size", beaconSize)
+
+    beaconSize = beaconSize - (dt * 10)
 end
 
 -- ################ Global Images ################
@@ -89,7 +100,7 @@ function love.load()
 
     map = tileLoader.load("lvl1.tmx")
     loadWorld()
-    updateLight()
+    updateLight(0)
 end
 
 function love.update(dt)
@@ -117,7 +128,6 @@ function love.draw()
         x, y, w, h = player.bbox:bbox()
         love.graphics.rectangle('line', x, y,
                                 player.width, player.height)
-        love.graphics.setColor(0, 0, 0)
         love.graphics.setColor(255, 255, 255)
     end
     x, y = player.bbox:bbox()
@@ -167,10 +177,6 @@ end
 function love.keypressed( key, unicode )
     if key == "1" then
         debug = not debug
-    end
-
-    if love.keyboard.isDown("r") then
-        player.bbox:setPosition(player.x, player.y)
     end
 
     if love.keyboard.isDown(" ") and player.state ~= JUMPING then

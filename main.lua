@@ -7,8 +7,13 @@ local debugText = "No collisions yet"
 local persisting = 0
 
 -- Player
-local player = { x = 680, y = 200, speed = 200,
-            width = 38.22, height = 61.8
+local JUMPING = 0
+local STANDING = 1
+local RUNNING = 2
+local LANDING = 3
+local player = { x = 50, y = 10, speed = 150, 
+            velocity = { x = 0, y = 0}, state = STANDING,
+            width = 40, height = 48, direction = 1
         }
 
 local function updatePlayer (dt)
@@ -29,20 +34,29 @@ function loadWorld()
     collider = HC(100, on_collision, collision_stop)
     local collisionLayer = map.layers["Fore"]
     for x, y, tile in collisionLayer:iterate() do
-        x = x * tileSize + (tileSize / 2)
-        y = y * tileSize + (tileSize / 2)
+        x = x * tileSize
+        y = y * tileSize
         t = collider:addRectangle(x, y, 16, 16)
+        t.type = 'tile'
         collider:setPassive(t)
         table.insert(objects, t)
     end
     p = collider:addRectangle(player.x, player.y, player.width, player.height)
-    collider:setPassive(p)
     player.bbox = p
 end
 
-function on_collision(dt, shapeA, shapeB, mtvX, mtvY)
-    if (shapeA == player.bbox or shapeB == player.bbox) and state == PLAY then
-        player.bbox:move(mtvX, mtvY)
+function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
+    if mtv_y < 0 and player.velocity.y > 0 then
+        player.bbox:move(0, mtv_y)
+        player.velocity.y = 0
+
+        if player.state == JUMPING then
+            if player.velocity.x ~= 0 then
+                player.state = LANDING
+            else
+                player.state = STANDING
+            end
+        end
     end
 end
 
@@ -57,8 +71,9 @@ local ligtPos = { x = player.x, y = player.y }
 local beaconEffect
 
 local function updateLight (dt) 
-   y = 600 - player.y
-   beaconEffect:send("light_pos", {player.x, y, 0})
+    x, y = player.bbox:bbox()
+    y = 600 - y
+    beaconEffect:send("light_pos", {x + player.width / 2, y - player.height / 2, 0})
 end
 
 -- ################ Global Images ################
@@ -71,7 +86,7 @@ function love.load()
     beaconEffect = love.graphics.newPixelEffect("beacon.glsl")
 
     local playerImg = love.graphics.newImage("assets/player.png")
-    player.anim = newAnimation(playerImg, player.width, player.height, 0.03, 30)
+    player.anim = newAnimation(playerImg, player.width, player.height, 0.1, 27)
 
     map = tileLoader.load("lvl1.tmx")
     loadWorld()
@@ -79,52 +94,72 @@ function love.load()
 end
 
 function love.update(dt)
-    handleInput(dt)
-    collider:update(dt)
-    updateLight(dt)
     updatePlayer(dt)
-
-    if debug and string.len(debugText) > 1024 then
-        debugText = string.sub(debugText, 100)
-    end
+    handleInput(dt)
+    applyGravity(dt)
+    collider:update(dt)
+    player.bbox:move(player.velocity.x, player.velocity.y)
+    updateLight(dt)
 end
 
 function love.draw()
     map:draw()
     love.graphics.setPixelEffect(beaconEffect)
-    --love.graphics.draw(smog, 0, 0)
+    love.graphics.draw(smog, 0, 0)
     love.graphics.setPixelEffect()
 
     if debug then
         for i=1, #objects do
             x, y = objects[i]:bbox()
-            love.graphics.rectangle('fill', x - tileSize/2, y - tileSize/2, tileSize, tileSize)
+            love.graphics.rectangle('fill', x, y, tileSize, tileSize)
         end
         love.graphics.setColor(255, 0, 0)
-        x, y = player.bbox:bbox()
-        love.graphics.rectangle('line', x - player.width/2, y - player.height/2,
+        x, y, w, h = player.bbox:bbox()
+        love.graphics.rectangle('line', x, y,
                                 player.width, player.height)
         love.graphics.setColor(0, 0, 0)
         love.graphics.print(debugText, 10, 10)
         love.graphics.setColor(255, 255, 255)
     end
     x, y = player.bbox:bbox()
-    player.anim:draw(100, 100)
+    offset = 0
+    if player.direction == -1 then
+        offset = player.width
+    end
+    player.anim:draw(x, y, 0, player.direction, 1, offset, 0)
 end
 
 -- ################ Keyboard Input ################
 function handleInput(dt)
-    if state == PLAY then
-        if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
-            player.x = player.x + (dt * player.speed)
-            player.anim:setSequence(1, 30)
-        elseif love.keyboard.isDown("left") or love.keyboard.isDown("a") then
-            player.x = player.x + dt * -player.speed
-            player.anim:setSequence(1, 30)
-        else
-            player.anim:setSequence(3, 3)
+    if love.keyboard.isDown("left") then
+        player.velocity.x = -5
+        player.direction = -1
+        if player.state == STANDING or player.state == LANDING then
+            player.anim:setSequence(10, 17)
+            player.state = RUNNING
         end
-        player.bbox:move(player.x, player.y)
+    elseif love.keyboard.isDown("right") then
+        player.velocity.x = 5
+        player.direction = 1
+        if player.state == STANDING or player.state == LANDING then
+            player.anim:setSequence(10, 17)
+            player.state = RUNNING
+        end
+    end
+    
+    if player.state ~= JUMPING then
+        if not love.keyboard.isDown("left") and not love.keyboard.isDown("right") then
+            player.velocity.x = 0
+            player.anim:setSequence(1, 3)
+            player.state = STANDING
+        end
+    end
+end
+
+function applyGravity(dt)
+    player.velocity.y = player.velocity.y + 0.5
+    if player.velocity.y > 10 then
+        player.velocity.y = 10
     end
 end
 
@@ -134,10 +169,12 @@ function love.keypressed( key, unicode )
     end
 
     if love.keyboard.isDown("r") then
-        player.body:setPosition(player.x, player.y)
+        player.bbox:setPosition(player.x, player.y)
     end
 
-    if love.keyboard.isDown(" ") then
-        player.body:setLinearVelocity(0, -500)
+    if love.keyboard.isDown(" ") and player.state ~= JUMPING then
+        player.velocity.y = -8
+        player.anim:setSequence(22, 22)
+        player.state = JUMPING
     end
 end

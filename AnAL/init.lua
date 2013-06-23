@@ -122,7 +122,7 @@ end
 
 function animation:setSequence(startF, endF)
     if startF ~= self.startFrame then
-        self.position = startF
+        self:seek(startF)
     end
     self.startFrame = startF
     self.endFrame = endF

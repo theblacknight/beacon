@@ -3,8 +3,6 @@ require('AnAL')
 
 -- Settings
 local debug = false
-local debugText = "No collisions yet"
-local persisting = 0
 
 -- Player
 local JUMPING = 0
@@ -100,6 +98,7 @@ function love.update(dt)
     collider:update(dt)
     player.bbox:move(player.velocity.x, player.velocity.y)
     updateLight(dt)
+    updatePlayer(dt)
 end
 
 function love.draw()
@@ -118,7 +117,6 @@ function love.draw()
         love.graphics.rectangle('line', x, y,
                                 player.width, player.height)
         love.graphics.setColor(0, 0, 0)
-        love.graphics.print(debugText, 10, 10)
         love.graphics.setColor(255, 255, 255)
     end
     x, y = player.bbox:bbox()

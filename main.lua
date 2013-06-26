@@ -1,3 +1,6 @@
+-- Camera/Scrolling
+require('camera')
+local currentOffset = 0
 -- Animation
 require('AnAL')
 
@@ -79,7 +82,7 @@ local beaconEffect
 
 local function updateLight (dt) 
     x, y = player.bbox:bbox()
-    y = 600 - y
+    y = 320 - y
     beaconEffect:send("light_pos", {x + player.width / 2, y - player.height / 2, 0})
     beaconEffect:send("size", beaconSize)
 
@@ -91,6 +94,7 @@ local smog
 
 -- ################ Love functions ################
 function love.load()
+    love.graphics.setMode(1024, 320)
     love.graphics.setBackgroundColor(255, 255, 255)
     smog = love.graphics.newImage("assets/smog.png")
     beaconEffect = love.graphics.newPixelEffect("beacon.glsl")
@@ -108,13 +112,35 @@ function love.update(dt)
     handleInput(dt)
     applyGravity(dt)
     collider:update(dt)
-    player.bbox:move(player.velocity.x, player.velocity.y)
+
+    -- This is very ugly but works for now
+    x, y = player.bbox:bbox()
+    if x >= 512 and player.velocity.x > 0 and currentOffset < 2175  then
+        currentOffset = currentOffset + player.velocity.x
+        camera:move(player.velocity.x, 0)
+        map:setDrawRange(map.viewX + player.velocity.x, map.viewY, 1024, 320)
+        for i=1, #objects do
+            objects[i]:move(-player.velocity.x, 0)
+        end
+    elseif x <= 400 and player.velocity.x < 0 and currentOffset > 0 then
+        currentOffset = math.max(0, currentOffset + player.velocity.x)
+        camera:move(player.velocity.x, 0)
+        map:setDrawRange(map.viewX + player.velocity.x, map.viewY, 1024, 320)
+        for i=1, #objects do
+            objects[i]:move(-player.velocity.x, 0)
+        end
+    else
+        player.bbox:move(player.velocity.x, 0)
+    end
+    player.bbox:move(0, player.velocity.y)
     updateLight(dt)
     updatePlayer(dt)
 end
 
 function love.draw()
+    camera:set()
     map:draw()
+    camera:unset()
     love.graphics.setPixelEffect(beaconEffect)
     love.graphics.draw(smog, 0, 0)
     love.graphics.setPixelEffect()

@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="50" height="38" tilewidth="16" tileheight="16">
+<map version="1.0" orientation="orthogonal" width="200" height="20" tilewidth="16" tileheight="16">
  <tileset firstgid="1" name="tile_set" tilewidth="16" tileheight="16">
   <image source="../assets/tile_set.png" width="128" height="128"/>
  </tileset>
- <layer name="Base" width="50" height="38">
+ <layer name="Background" width="200" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt2EEKgCAUAFHPZWXd/1S5KBApctd8mcWgLgSf7swppaW21vI1/7O9VppG9hzN2SmO3hLZ0VqiO27LDI7RdLDSwUoHKx2sdLDSwUoHKx2sdLDSwUoHKx2sdDy3TeIY/VemOfr7j+rozx3Ncb9DeVlHcZSPUYeOE8bbtuw=
+   eJzt2DsOwjAQQMFtOAbcA8LH9z8ViZQCRdkgSygK9hRTeb1y8xoPETH8mfvo+uF2gDfBUegDcvqAnD4gpw968qic1we9mNoolXf0QS9K6AMyJfQBmRL6gEwJfdC3rf+p16xmnz5oyfPH+/RBS/QBOX1ATh+w7jw6LVy+zG+dT/RBK/QBOX3AvvTBXt65N5Xz
   </data>
  </layer>
- <layer name="Mid" width="50" height="38">
+ <layer name="Fore" width="200" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt2TEOwjAMBVAvVacCG13gCNz/eDQDUgRp5Dj/J0byl7zGek3b1OoiIjfh5n7UclI7qMdnvZJlO+oC6lOyoAwpa7buWinEnj2yXk/AennO9rtUvRamoxa0ZaSDuS+jHOx7zKPDYhnhaDWkejX2YDssBm8Oq8Fyjnl0WM5ibw7r94QnR883kRdH63P9HS+O3t5e3rveHSI6R++84MGBmHlmO1Bz20wHcvac5UAaUmY40IaU0Q5Wj3DoEw59wqFPOPQJhz7h0Gf0HPWvDhG+4yq/14vxH4zpKBlYFpajZmBYGA6NAWV5A3jjE2s=
+   eJzt1zsKgDAURUEt/WzANvtfpKb3gkFF0Rl4bQjCIc/SAXuWbcrTl4CX0gdk+oBMH5DpAzJ9QKYPyPQBmT4g0wdk+oBMH5DpAzJ9QHZnH8M2/ckZb7obHOH9gEwfkNU+6h4zX3BW3ae+tg+17IK0e/M3nbr2/wFj/jYrb0AFUQ==
   </data>
  </layer>
- <layer name="Fore" width="50" height="38">
+ <layer name="Spikes" width="200" height="20" visible="0">
   <data encoding="base64" compression="zlib">
-   eJztlrsKgDAQBC+QSmx8VJZ+Qv7/41QwYBGJktPbhB2YfofEoIiIk/ppoeGAHVi4jJ3dtFekts+74bQWUg1WDIk9aPoHHRPAzpxfn7P1XdJisR6gBDvK8QrG78+yQ/MdWX/efiUoatmhyXEmvfUIBeL9qr2ltv/aO2LHaD2kEIT3VwN2YMEOLNiBBTuwYAcW7MCCHVi01kEx3ADE8whn
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAGo+gAAB
+  </data>
+ </layer>
+ <layer name="Beacons" width="200" height="20" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAGo+gAAB
   </data>
  </layer>
 </map>

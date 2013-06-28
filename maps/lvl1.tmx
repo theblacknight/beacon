@@ -18,9 +18,9 @@
    eJztwzENAAAMA6CKmn9te+uhkJAAAAAAAAAAAAAAAAAAAABLrkJ7hS8AnQ==
   </data>
  </layer>
- <layer name="Beacons" width="200" height="20" visible="0">
+ <layer name="Beacons" width="200" height="20" visible="0" opacity="0">
   <data encoding="base64" compression="zlib">
-   eJzt1zENAAAIBLFf8G8ZDyxA0iq49RIAAAAAAAAAAPivtgMAAADgEJ8MAABMNQV3AAs=
+   eJzt2TERAAAIAzEW/FtGAAI4IFHwnRsBAAAAAADAdjkdAAAAAAAAQHP9w7m+DwDgqwJcuwAQ
   </data>
  </layer>
 </map>

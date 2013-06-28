@@ -118,9 +118,9 @@ function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
             end
         end
     elseif collisionTile.type == 'beacon' then
-        beaconSize = beaconSize + 10
+        beaconSize = beaconSize + 20
         collider:remove(collisionTile)
-        table.remove(beacons, collisionTile.idx)
+        beacons[collisionTile.idx] = nil
     end
 end
 
@@ -173,12 +173,22 @@ function love.update(dt)
         for i=1, #objects do
             objects[i]:move(-player.velocity.x, 0)
         end
+        for i=1, #beacons do
+            if beacons[i] ~= nil then
+                beacons[i]:move(-player.velocity.x, 0)
+            end
+        end
     elseif x <= 400 and player.velocity.x < 0 and currentOffset > 0 then
         currentOffset = math.max(0, currentOffset + player.velocity.x)
         camera:move(player.velocity.x, 0)
         map:setDrawRange(map.viewX + player.velocity.x, map.viewY, 1024, 320)
         for i=1, #objects do
             objects[i]:move(-player.velocity.x, 0)
+        end
+        for i=1, #beacons do
+            if beacons[i] ~= nil then
+                beacons[i]:move(-player.velocity.x, 0)
+            end
         end
     else
         player.bbox:move(player.velocity.x, 0)
@@ -192,13 +202,15 @@ end
 function love.draw()
     camera:set()
     map:draw()
-    for i=1, #beacons do
-        x, y = beacons[i]:bbox()
-        beaconAnim:draw(x, y)
-    end
     camera:unset()
+    for i=1, #beacons do
+        if beacons[i] ~= nil then
+            x, y = beacons[i]:bbox()
+            beaconAnim:draw(x, y)
+        end
+    end
     love.graphics.setPixelEffect(beaconEffect)
-    -- love.graphics.draw(smog, 0, 0)
+    love.graphics.draw(smog, 0, 0)
     love.graphics.setPixelEffect()
 
     if debug then

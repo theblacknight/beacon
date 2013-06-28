@@ -27,51 +27,6 @@ tileLoader.path = "maps/"
 local map
 local tileSize = 16
 
--- ################ Physics ################
-local HC = require 'hardoncollider'
-local collider
-local objects = {}
-function loadWorld()
-    collider = HC(100, on_collision, collision_stop)
-    local collisionLayer = map.layers["Fore"]
-    for x, y, tile in collisionLayer:iterate() do
-        x = x * tileSize
-        y = y * tileSize
-        t = collider:addRectangle(x, y, 16, 16)
-        t.type = 'tile'
-        collider:setPassive(t)
-        table.insert(objects, t)
-    end
-    p = collider:addRectangle(player.x, player.y, player.width, player.height)
-    player.bbox = p
-end
-
-function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
-    if mtv_y > 0 then
-        player.bbox:move(0, mtv_y)
-        player.velocity.y = 0
-        return
-    end
-
-    if mtv_y < 0 and player.velocity.y > 0 then
-        player.bbox:move(0, mtv_y)
-        player.velocity.y = 0
-
-        if player.state == JUMPING then
-            if player.velocity.x ~= 0 then
-                player.state = LANDING
-            else
-                player.state = STANDING
-            end
-        end
-    end
-    player.bbox:move(mtv_x, 0)
-end
-
--- this is called when two shapes stop colliding
-function collision_stop(dt, shape_a, shape_b)
-end
-
 -- ################ Lighting ################
 local ligtPos = { x = player.x, y = player.y }
 local BEACON_INITIAL_SIZE = 200
@@ -89,8 +44,101 @@ local function updateLight (dt)
     beaconSize = beaconSize - (dt * 10)
 end
 
+-- ################ Physics ################
+local HC = require 'hardoncollider'
+local collider
+local objects = {}
+local beacons = {}
+local spikes = {}
+
+function loadWorld()
+    collider = HC(100, on_collision, collision_stop)
+    local collisionLayer = map.layers["Fore"]
+    for x, y, tile in collisionLayer:iterate() do
+        x = x * tileSize
+        y = y * tileSize
+        t = collider:addRectangle(x, y, 16, 16)
+        t.type = 'tile'
+        collider:setPassive(t)
+        table.insert(objects, t)
+    end
+    p = collider:addRectangle(player.x, player.y, player.width, player.height)
+    player.bbox = p
+
+    local beaconTiles = map.layers["Beacons"]
+    local idx = 1
+    for x, y, tile in beaconTiles:iterate() do
+        x = x * tileSize
+        y = y * tileSize
+        t = collider:addRectangle(x, y, 16, 16)
+        t.type = 'beacon'
+        t.idx = idx
+        collider:setPassive(t)
+        beacons[idx] = t
+        idx = idx + 1
+    end
+
+    local spikeTiles = map.layers["Spikes"]
+    local idx = 1
+    for x, y, tile in spikeTiles:iterate() do
+        x = x * tileSize
+        y = y * tileSize
+        t = collider:addRectangle(x, y, 16, 16)
+        t.type = 'spike'
+        t.idx = idx
+        collider:setPassive(t)
+        spikes[idx] = t
+        idx = idx + 1
+    end
+end
+
+function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
+    collisionTile = getImpactTile(shape_a, shape_b)
+    if collisionTile.type == 'tile' then
+        if mtv_y > 0 then
+            player.bbox:move(0, mtv_y)
+            player.velocity.y = 0
+            return
+        end
+
+        player.bbox:move(mtv_x, 0)
+        if mtv_x ~= 0 then
+            player.velocity.x = 0
+        end
+        if mtv_y < 0 and player.velocity.y > 0 then
+            player.bbox:move(0, mtv_y)
+            player.velocity.y = 0
+
+            if player.state == JUMPING then
+                if player.velocity.x ~= 0 then
+                    player.state = LANDING
+                else
+                    player.state = STANDING
+                end
+            end
+        end
+    elseif collisionTile.type == 'beacon' then
+        beaconSize = beaconSize + 10
+        collider:remove(collisionTile)
+        table.remove(beacons, collisionTile.idx)
+    end
+end
+
+function getImpactTile(shapeA, shapeB)
+    if shapeA.type == 'tile' or shapeA.type == 'beacon' then
+        return shapeA
+    else
+        return shapeB
+    end
+end
+
+-- this is called when two shapes stop colliding
+function collision_stop(dt, shape_a, shape_b)
+end
+
 -- ################ Global Images ################
 local smog
+local beaconAnim
 
 -- ################ Love functions ################
 function love.load()
@@ -101,6 +149,9 @@ function love.load()
 
     local playerImg = love.graphics.newImage("assets/player.png")
     player.anim = newAnimation(playerImg, player.width, player.height, 0.1, 27)
+
+    local beaconImg = love.graphics.newImage("assets/light.png")
+    beaconAnim = newAnimation(beaconImg, 16, 16, 0.1, 16)
 
     map = tileLoader.load("lvl1.tmx")
     loadWorld()
@@ -135,14 +186,19 @@ function love.update(dt)
     player.bbox:move(0, player.velocity.y)
     updateLight(dt)
     updatePlayer(dt)
+    beaconAnim:update(dt)
 end
 
 function love.draw()
     camera:set()
     map:draw()
+    for i=1, #beacons do
+        x, y = beacons[i]:bbox()
+        beaconAnim:draw(x, y)
+    end
     camera:unset()
     love.graphics.setPixelEffect(beaconEffect)
-    love.graphics.draw(smog, 0, 0)
+    -- love.graphics.draw(smog, 0, 0)
     love.graphics.setPixelEffect()
 
     if debug then
@@ -206,7 +262,7 @@ function love.keypressed( key, unicode )
     end
 
     if love.keyboard.isDown(" ") and player.state ~= JUMPING then
-        player.velocity.y = -8
+        player.velocity.y = -9
         player.anim:setSequence(22, 22)
         player.state = JUMPING
     end

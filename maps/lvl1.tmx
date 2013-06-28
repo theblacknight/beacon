@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="200" height="20" tilewidth="16" tileheight="16">
+<map version="1.0" orientation="orthogonal" width="200" height="20" tilewidth="16" tileheight="16" backgroundcolor="#ffffff">
  <tileset firstgid="1" name="tile_set" tilewidth="16" tileheight="16">
   <image source="../assets/tile_set.png" width="128" height="128"/>
  </tileset>
  <layer name="Background" width="200" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt2DsOwjAQQMFtOAbcA8LH9z8ViZQCRdkgSygK9hRTeb1y8xoPETH8mfvo+uF2gDfBUegDcvqAnD4gpw968qic1we9mNoolXf0QS9K6AMyJfQBmRL6gEwJfdC3rf+p16xmnz5oyfPH+/RBS/QBOX1ATh+w7jw6LVy+zG+dT/RBK/QBOX3AvvTBXt65N5Xz
+   eJzt2LsKwjAYgNEsDuqguOvoO2i95P2fygYciphKQEranOFMTX/S0G9JF0LoZubWuwxcK9gT1EIfkKcPyNMH5OmDltwL1+uDVqQ2YuE7+qAVMegDcmLQB+TEoA/IiUEftG3sfur5VjJPHyzJ48/z9MGSTNHHsXeu4FuhlD4gTx/wXfpvVx9OP9aPPU/0wVIsuY91b1PBGTNfU/SxG8ze/2nf28L1hwrOGhL3u0zlBeR/k3Y=
   </data>
  </layer>
  <layer name="Fore" width="200" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt1zsKgDAURUEt/WzANvtfpKb3gkFF0Rl4bQjCIc/SAXuWbcrTl4CX0gdk+oBMH5DpAzJ9QKYPyPQBmT4g0wdk+oBMH5DpAzJ9QHZnH8M2/ckZb7obHOH9gEwfkNU+6h4zX3BW3ae+tg+17IK0e/M3nbr2/wFj/jYrb0AFUQ==
+   eJzt1rsOgkAURVEsfTTaacn/f6RQkFB4Ekd0mDFrJae/EXZkHIBX7tPGvY+ARukDMn1Apg/I9AGZPiDTB2T6gEwfkOkDsp77uE47bNit/sl0puc+5tu39PGofzKd6bmPUktPuuBd+oDsl30ch23fP/NOX7xHH5Ty/wGZPiBb3pnL3odU8EkfJd+ClGv5Nz0PZc//n7e29y3W1p6LNQbn
   </data>
  </layer>
- <layer name="Spikes" width="200" height="20" visible="0">
+ <layer name="Spikes" width="200" height="20">
   <data encoding="base64" compression="zlib">
-   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAGo+gAAB
+   eJztwzENAAAMA6CKmn9te+uhkJAAAAAAAAAAAAAAAAAAAABLrkJ7hS8AnQ==
   </data>
  </layer>
  <layer name="Beacons" width="200" height="20" visible="0">
   <data encoding="base64" compression="zlib">
-   eJztwQEBAAAAgJD+r+4ICgAAAAAAAAAAAAAAAAAAAGo+gAAB
+   eJzt1zENAAAIBLFf8G8ZDyxA0iq49RIAAAAAAAAAAPivtgMAAADgEJ8MAABMNQV3AAs=
   </data>
  </layer>
 </map>

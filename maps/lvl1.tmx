@@ -5,22 +5,27 @@
  </tileset>
  <layer name="Background" width="200" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt2LsKwjAYgNEsDuqguOvoO2i95P2fygYciphKQEranOFMTX/S0G9JF0LoZubWuwxcK9gT1EIfkKcPyNMH5OmDltwL1+uDVqQ2YuE7+qAVMegDcmLQB+TEoA/IiUEftG3sfur5VjJPHyzJ48/z9MGSTNHHsXeu4FuhlD4gTx/wXfpvVx9OP9aPPU/0wVIsuY91b1PBGTNfU/SxG8ze/2nf28L1hwrOGhL3u0zlBeR/k3Y=
+   eJztmlEOwiAQBbmWtlXufyo1sUlDuqUrBXZxPibho9L3gDG1cQohTM6Y39w23A1kqtl15H5WmQ1kKMmOH7BUXvfe/Uqy4wc8Kq97734l2fED8EPOjh+2qfXss51X60d6bo7OjiU/tGuJH/ap9d3+SMaas+PRj0+/qPwMftinlR+a+3j0Iwb8yHX12A8/riEG/Mh19djPoh+pG/jhH/yQ58UPOTt+2MaiH1afr47eMTy/aM8MftgGP/qtFX60ZxHGrfZ8b178ONczd35iw65XY8WPdQ+XZCxdr30m0OZYx6X3wQ/8GImtD6P8vwQ/8kgZ8UNmFD9qZPfiRwzn3tFJ1+GHDH7I2fEDav3GWde9d7+S7PiRZ9mh99554Z/8APiVF36dmsM=
+  </data>
+ </layer>
+ <layer name="Mid" width="200" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzt2LsOgyAYhmGWjq0urV3sVrce7v/qCokkxor+IB6Q90n+pSCalC8clAIAAAAAAACA4zrrumz9EcBOXXXdtv4IYGXftvo+nTZTta537zdpAal66noI+pl8nHTdHe1V2z5UQKrMvJfmo5noYzNSeo4N7JXdN0n6SeZ6fx1xrTdACnzWD+laYDMytd5gPsm6jnB23o+dr6fOHsrxTDMyJuLIOR9jZ95Y+xbJ/irkHPFS+f5va8o5H8ZQRmLu6aV3TL73UHXAtxyV7xz26Z9yPrpze86ctvsbU7Hvg8jH8siHW4w7zqXyIc1vFfBe6b1YDsiH29x8FOp/f1WOPhE2rmvMQtAnxjMA9ukHJTUSpg==
   </data>
  </layer>
  <layer name="Fore" width="200" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt1rsOgkAURVEsfTTaacn/f6RQkFB4Ekd0mDFrJae/EXZkHIBX7tPGvY+ARukDMn1Apg/I9AGZPiDTB2T6gEwfkOkDsp77uE47bNit/sl0puc+5tu39PGofzKd6bmPUktPuuBd+oDsl30ch23fP/NOX7xHH5Ty/wGZPiBb3pnL3odU8EkfJd+ClGv5Nz0PZc//n7e29y3W1p6LNQbn
+   eJztmjkOwjAQRY2oWBqWBjroKMP9D0esYCkyNng3sd+TRlmK0RDNnyXkLgDAxGW0e+0gAP4U9AFgB31Aa+xGW4229rSjwRf6gNaQOf182zA7V9fCchzEJ+gDWuOS2Bf6gJZAHwB20AeAnYfh3kFMO/sv03d09AEhyBx0yTefXEyFqX+cHGM6G3yhD/DFNd98cjEVt4S+lqwP155Zun7lYCPa+025YP+YkLHH6ONaPuRgYmvBtnzI1aB/hKH0tCRdKGLnmZ76iu9u9O3ZoI+8yLrv+51DzVof26f0fIvxF6rpYWb6f+j6PXmczyF6buTUh+vMXGouqKGPkLpfs9an3rtj/OXa33XmMfb8/mrJ8xXUAX2EI/tjT3tvj6ic2dcOpAC++lDfSbtaD8+wN2JnzRbMppfY98dYG/YCPb8QJQ==
   </data>
  </layer>
  <layer name="Spikes" width="200" height="20">
   <data encoding="base64" compression="zlib">
-   eJztwzENAAAMA6CKmn9te+uhkJAAAAAAAAAAAAAAAAAAAABLrkJ7hS8AnQ==
+   eJztwzENAAAIA7CJwr82sh8HtEkTAAAAAAAAAAAAAAAAAADgkzlCLVruAQU=
   </data>
  </layer>
- <layer name="Beacons" width="200" height="20" visible="0" opacity="0">
+ <layer name="Beacons" width="200" height="20" visible="0">
   <data encoding="base64" compression="zlib">
-   eJzt2TERAAAIAzEW/FtGAAI4IFHwnRsBAAAAAADAdjkdAAAAAAAAQHP9w7m+DwDgqwJcuwAQ
+   eJzt17ENAAAIAjAX/3/ZM4jaXsBEoAoAAAAA4JZOBwAI0H0AAHxh+wIAALCJHwsAwEYDeroAFQ==
   </data>
  </layer>
 </map>

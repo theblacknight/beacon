@@ -142,6 +142,7 @@ local beaconAnim
 
 -- ################ Love functions ################
 function love.load()
+    love.graphics.setCaption('Beacon')
     love.graphics.setMode(1024, 320)
     love.graphics.setBackgroundColor(255, 255, 255)
     smog = love.graphics.newImage("assets/smog.png")
